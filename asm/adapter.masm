@@ -1,0 +1,42 @@
+# Darwin Oracle Adapter — MASM component.
+#
+# Spec: darwin-docs/m1-architecture-spec.md §8.
+# Exposes the `price-feed` WIT interface (wit/oracle.wit) to the Darwin
+# Protocol Account. Runtime behaviour: cross-component call to Pragma
+# oracle account; fallback to signed-attestation oracle on staleness.
+
+use.miden::account
+
+const PRAGMA_ORACLE_ID_SLOT     = 0
+const MAX_PRICE_AGE_BLOCKS_SLOT = 1
+const FALLBACK_PUBKEY_SLOT      = 2
+
+#! get-price (WIT): read a single Pragma feed by pair id.
+#! Inputs: [PRAGMA_PAIR_ID]
+#! Outputs: [PRICE_FELT, TIMESTAMP_FELT, STATUS]
+export.get_price
+    # 1. Load Pragma oracle account ID.
+    push.PRAGMA_ORACLE_ID_SLOT exec.account::get_item
+
+    # 2. Cross-component call to Pragma::get_price.
+    # TODO: replace with exec.pragma::get_price once the cross-component
+    # call ABI is wired in.
+
+    # 3. Validate freshness vs MAX_PRICE_AGE_BLOCKS_SLOT.
+    # 4. If stale, jump to fallback path.
+    push.0 push.0 push.0
+end
+
+#! get-prices-for-basket (WIT): read every constituent's feed in one
+#! call. Used by DepositNote / RedeemNote.
+export.get_prices_for_basket
+    # TODO: iterate over the caller's basket constituents (passed in
+    # via note inputs) and return a list of price-quote records.
+    push.0
+end
+
+#! Administrative: rotate the Pragma oracle pointer.
+export.update_pragma_address
+    # TODO: verify caller is the Darwin admin, write to slot 0.
+    push.0
+end

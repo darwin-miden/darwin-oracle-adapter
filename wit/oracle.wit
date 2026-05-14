@@ -1,0 +1,36 @@
+package darwin:oracle@0.1.0;
+
+interface price-feed {
+    /// Pragma pair identifier, e.g. "ETH/USD" packed as a felt.
+    type pair-id = u64;
+
+    /// Price expressed in USD with 8 decimals of precision.
+    type price = u64;
+
+    /// Miden block number at which the price was last updated.
+    type timestamp = u64;
+
+    enum read-status {
+        ok,
+        stale,
+        fallback-used,
+    }
+
+    record price-quote {
+        price: price,
+        timestamp: timestamp,
+        status: read-status,
+    }
+
+    /// Read a single price. Falls through to the signed-attestation
+    /// fallback if the primary Pragma source is unavailable or stale.
+    get-price: func(pair: pair-id) -> price-quote;
+
+    /// Read prices for every constituent of the caller's basket in one
+    /// call.
+    get-prices-for-basket: func() -> list<price-quote>;
+}
+
+world adapter {
+    export price-feed;
+}

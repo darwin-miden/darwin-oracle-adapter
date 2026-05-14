@@ -1,0 +1,11 @@
+[package]
+name = "darwin-oracle-adapter"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Pragma Oracle adapter on Miden with dynamic address resolution and a signed-attestation fallback."
+repository = "https://github.com/darwin-miden/darwin-oracle-adapter"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+thiserror = "1"
