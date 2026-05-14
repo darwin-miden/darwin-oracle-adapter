@@ -10,7 +10,27 @@
 /// time of M1 implementation work. Not authoritative — the adapter
 /// must re-resolve at runtime via its own storage slot. This snapshot
 /// exists for tooling and for the test report's appendix.
-pub const PRAGMA_TESTNET_ORACLE_ID_SNAPSHOT: &str = "0xec7e450b91bf690015ad79573689f1";
+///
+/// Pragma rotates this address between testnet iterations. The
+/// canonical user-facing form is the bech32 string at
+/// `PRAGMA_TESTNET_ORACLE_BECH32`; the hex form is the
+/// `miden-objects::AccountId` decoded from it.
+pub const PRAGMA_TESTNET_ORACLE_ID_SNAPSHOT: &str = "0xd0e1384e21a6350029d80128eb5c44";
+
+/// Bech32 form of the current Pragma testnet oracle account, as shown
+/// on <https://miden.pragma.build>.
+pub const PRAGMA_TESTNET_ORACLE_BECH32: &str = "mtst1argwzwzwyxnr2qpfmqqj366ugsax2t3x";
+
+/// Pragma's internal faucet-id encoding for each pair. Their UI
+/// surfaces these as "Faucet ID 1:0" etc. The pair-id felt the MASM
+/// adapter passes on the stack is *not* the same as these — see
+/// `pair_id_felt`. These constants live here for cross-referencing
+/// against Pragma's own dashboard.
+pub const PRAGMA_FAUCET_ID_BTC: u32 = 1;
+pub const PRAGMA_FAUCET_ID_ETH: u32 = 2;
+pub const PRAGMA_FAUCET_ID_WBTC: u32 = 3;
+pub const PRAGMA_FAUCET_ID_USDT: u32 = 4;
+pub const PRAGMA_FAUCET_ID_DAI: u32 = 5;
 
 /// The Pragma price pairs Darwin reads. Each constituent of every M1
 /// basket maps to exactly one pair in this list.
