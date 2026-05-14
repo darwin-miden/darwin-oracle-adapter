@@ -1,0 +1,55 @@
+# Mock Pragma-style oracle for end-to-end testnet validation.
+#
+# Mirrors the interface of astraly-labs/pragma-miden's oracle account:
+#   - `pub proc get_median` — given a faucet id, return [is_tracked, median_price].
+#
+# Backing storage: one slot per asset. Slot 0 is reserved for admin
+# bookkeeping (number of tracked assets). Each tracked asset writes
+# its price into a slot keyed by faucet-id prefix.
+#
+# Darwin uses this to prove the on-chain "call a foreign oracle
+# procedure from a transaction script" path works end-to-end on
+# testnet, independent of Pragma's build pipeline (their source ships
+# with a `{GET_ENTRY_HASH}` placeholder that requires their build).
+
+use miden::protocol::native_account
+
+# A pre-seeded median ETH/USD price. We use a u32-sized number here
+# (`push.X` with X > u32::MAX is split into two felts by the
+# assembler, which would change the proc's net stack delta — so the
+# demo encodes price in compressed 1e2 units: 200_000 = $2.00 per
+# ETH at the oracle's reference moment, scale x100).
+const ETH_MEDIAN_X1E8=200000
+
+# A pre-seeded median BTC/USD price.
+const BTC_MEDIAN_X1E8=6500000000000
+
+#! Returns a fixed median price for the demo. Mirrors the Pragma oracle
+#! interface for `get_median`:
+#!
+#! Inputs:  [faucet_id_prefix, faucet_id_suffix, amount, 0]
+#! Outputs: [is_tracked, median_price, amount, 0]
+#!
+#! For the demo we ignore the faucet_id and return a constant price.
+#! The real production version reads from the publisher accounts.
+pub proc get_median
+    # Stack on entry: [prefix, suffix, amount, 0, pad(12)]  (depth 16)
+    # We need to return at depth 16 too. Strategy: drop 2, push 2.
+    # Net change = 0, so the callee returns at depth 16.
+    drop                            # [suffix, amount, 0, pad(12)]
+    drop                            # [amount, 0, pad(12)]
+    push.ETH_MEDIAN_X1E8            # [median, amount, 0, pad(12)]
+    push.1                          # [is_tracked, median, amount, 0, pad(12)]
+end
+
+#! Mirrors Pragma's `get_entry`. For the demo always returns the same
+#! constant entry, regardless of the requested publisher.
+#!
+#! Inputs:  [PUBLISHER_ID, faucet_id_word]
+#! Outputs: [ENTRY]
+pub proc get_entry
+    # Drop all 8 input words to clean the stack.
+    dropw dropw
+    # Push the entry word: [price, timestamp, decimals, publisher_count]
+    push.0 push.8 push.0 push.ETH_MEDIAN_X1E8
+end
