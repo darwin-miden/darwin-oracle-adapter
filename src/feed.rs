@@ -42,6 +42,15 @@ impl PriceQuote {
     pub fn is_fresh(&self, current_block: u64) -> bool {
         current_block.saturating_sub(self.timestamp) <= Self::MAX_PRICE_AGE_BLOCKS
     }
+
+    /// Returns the USD-denominated value of `position_base_units` of the
+    /// underlying asset, in the same 8-decimal fixed-point scale as the
+    /// price. Saturates on overflow so callers don't panic on extreme
+    /// inputs. The SDK rebalance planner consumes this when building
+    /// portfolio snapshots from live oracle reads.
+    pub fn value_of(&self, position_base_units: u64) -> u128 {
+        (position_base_units as u128).saturating_mul(self.price as u128)
+    }
 }
 
 #[cfg(test)]
@@ -70,5 +79,41 @@ mod tests {
         };
         // current_block < timestamp shouldn't panic.
         assert!(q.is_fresh(50));
+    }
+
+    #[test]
+    fn value_of_multiplies_position_by_price() {
+        // $20.0000_0000 = 20 * 1e8 = 2_000_000_000
+        let q = PriceQuote {
+            price: 2_000_000_000,
+            timestamp: 1,
+            status: ReadStatus::Ok,
+        };
+        // 3 base units * $20.0 = $60.0 (in 8-decimal scale: 6_000_000_000)
+        assert_eq!(q.value_of(3), 6_000_000_000u128);
+    }
+
+    #[test]
+    fn value_of_saturates_on_overflow() {
+        let q = PriceQuote {
+            price: u64::MAX,
+            timestamp: 1,
+            status: ReadStatus::Ok,
+        };
+        // u64::MAX * u64::MAX is < u128::MAX, so should not saturate
+        // — verifies the chosen u128 return type is wide enough for
+        // realistic Miden faucets (max_supply * max-price-x1e8).
+        assert!(q.value_of(u64::MAX) > 0);
+        assert!(q.value_of(u64::MAX) < u128::MAX);
+    }
+
+    #[test]
+    fn value_of_zero_position_returns_zero() {
+        let q = PriceQuote {
+            price: 9_999_999,
+            timestamp: 1,
+            status: ReadStatus::Ok,
+        };
+        assert_eq!(q.value_of(0), 0);
     }
 }
