@@ -17,10 +17,14 @@
 pub mod address;
 pub mod fallback;
 pub mod feed;
+pub mod pragma;
 
 pub use address::{AdapterStorageLayout, OracleAddress};
 pub use fallback::{FallbackKey, SignedAttestation};
 pub use feed::{PriceQuote, ReadStatus};
+pub use pragma::{
+    pair_id_felt, pragma_pair_for_alias, PRAGMA_TESTNET_ORACLE_ID_SNAPSHOT, SUPPORTED_PAIRS,
+};
 
 pub const ADAPTER_MASM: &str = include_str!("../asm/adapter.masm");
 pub const ORACLE_WIT: &str = include_str!("../wit/oracle.wit");
