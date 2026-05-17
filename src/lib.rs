@@ -19,6 +19,9 @@ pub mod fallback;
 pub mod feed;
 pub mod pragma;
 
+#[cfg(feature = "pragma-live")]
+pub mod pragma_live;
+
 pub use address::{AdapterStorageLayout, OracleAddress};
 pub use fallback::{FallbackKey, SignedAttestation};
 pub use feed::{PriceQuote, ReadStatus};

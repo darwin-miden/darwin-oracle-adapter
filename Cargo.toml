@@ -9,3 +9,50 @@ repository = "https://github.com/darwin-miden/darwin-oracle-adapter"
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 thiserror = "1"
+
+# `pragma-live` feature pulls in pm-accounts (astraly-labs/pragma-miden)
+# so darwin-oracle-adapter can compute the live Pragma oracle's
+# get_median MAST root locally (same as Pragma computes when patching
+# {GET_ENTRY_HASH} into oracle.masm). Off by default to keep the pure
+# pair-id math crate light.
+[features]
+default = []
+pragma-live = [
+    "dep:miden-client",
+    "dep:miden-client-sqlite-store",
+    "dep:miden-protocol",
+    "dep:pm-accounts",
+    "dep:tokio",
+    "dep:anyhow",
+    "dep:hex",
+]
+
+[dependencies.miden-client]
+version  = "0.14"
+features = ["tonic"]
+optional = true
+
+[dependencies.miden-client-sqlite-store]
+version  = "0.14"
+optional = true
+
+[dependencies.miden-protocol]
+version  = "0.14"
+optional = true
+
+[dependencies.pm-accounts]
+git      = "https://github.com/astraly-labs/pragma-miden"
+optional = true
+
+[dependencies.tokio]
+version  = "1"
+features = ["rt", "rt-multi-thread", "macros"]
+optional = true
+
+[dependencies.anyhow]
+version  = "1"
+optional = true
+
+[dependencies.hex]
+version  = "0.4"
+optional = true
