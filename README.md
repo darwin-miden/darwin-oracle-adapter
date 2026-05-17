@@ -9,7 +9,7 @@ See [`darwin-docs/m1-architecture-spec.md`](https://github.com/darwin-miden/darw
 Two operational realities make a thin adapter layer necessary on Miden testnet:
 
 1. **Pragma's oracle account address changes between testnet iterations.** Hardcoding it into every Darwin user account would mean every iteration breaks Darwin.
-2. **Pragma can be down or stale.** The grant explicitly requires a fallback for the M1 dependency window.
+2. **Pragma can be down or stale.** We need a fallback so Darwin keeps quoting NAV even when Pragma is unreachable.
 
 The adapter holds the *current* Pragma address in its own storage and exposes a stable WIT interface (`wit/oracle.wit`) to the Darwin Protocol Account. The Darwin team can rotate the Pragma pointer via an administrative `update_pragma_address` call without redeploying user-facing accounts.
 
