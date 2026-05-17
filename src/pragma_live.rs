@@ -200,7 +200,7 @@ pub fn faucet_id_for_pair(pair: &str) -> Option<(u64, u64)> {
 /// Format taken verbatim from Pragma's `pm-oracle-cli median` source
 /// (`crates/cli/oracle/src/commands/median.rs`):
 ///
-/// ```rust
+/// ```text
 /// let faucet_id_word: Word = [
 ///     Felt::new(0),
 ///     Felt::new(0),
