@@ -28,7 +28,17 @@ darwin-oracle-adapter/
 
 ## Status
 
-Scaffold. The Rust types and WIT interface match the M1 spec; the MASM procedure bodies are stubbed pending the Miden v0.14 toolchain. Two unit tests assert that the bundled assets are non-empty and that the `ReadStatus` enum round-trips cleanly.
+Live on Miden testnet. The adapter resolves the Pragma oracle account
+dynamically (Pragma rotates between testnet iterations), exposes a
+stable WIT interface to the Darwin Protocol Account, and queries
+on-chain median prices via foreign-account state proofs. The
+`oracle_query_real` binary in `darwin-protocol` reads live medians
+end-to-end in ~10s on testnet — see
+[`darwin-docs/status.md`](https://github.com/darwin-miden/darwin-docs/blob/main/docs/status.md)
+for the latest verified numbers (ETH/USD, BTC/USD, USDT/USD).
+Eleven unit tests pass, covering the WIT round-trips, bundled
+asset integrity, and the signed-attestation fallback path used
+when Pragma is unreachable.
 
 ## License
 
