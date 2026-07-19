@@ -1,6 +1,6 @@
 # Darwin Oracle Adapter — MASM component.
 #
-# Spec: darwin-docs/m1-architecture-spec.md §8.
+# Spec: darwin-docs/architecture-spec.md §8.
 # Exposes the `price-feed` WIT interface (wit/oracle.wit) to the Darwin
 # Protocol Account. Runtime behaviour: cross-component call to Pragma
 # oracle account; fallback to signed-attestation oracle on staleness.

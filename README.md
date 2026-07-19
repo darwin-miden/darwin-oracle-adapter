@@ -2,7 +2,7 @@
 
 Pragma Oracle adapter for Darwin Protocol on Miden, with dynamic address resolution and a signed-attestation fallback.
 
-See [`darwin-docs/m1-architecture-spec.md`](https://github.com/darwin-miden/darwin-docs/blob/main/docs/m1-architecture-spec.md) §8 for the full specification.
+See [`darwin-docs/architecture-spec.md`](https://github.com/darwin-miden/darwin-docs/blob/main/docs/architecture-spec.md) §8 for the full specification.
 
 ## Why an adapter
 
